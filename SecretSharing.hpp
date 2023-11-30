@@ -1,9 +1,8 @@
 #include <vector>
-#include<iostream>
-#include<random>
-#include<time.h>
-
-
+#include <iostream>
+#include <random>
+#include <time.h>
+#include <cmath>
 
 class secret
 {
@@ -16,16 +15,19 @@ class secretSharing
 {
 public:
     secretSharing(int, int);
-    void splitSecret(std::ostream &,double);
+    void splitSecret(double);
+    double calculate(double);
+    void outputSecret();
+    double calculateSecret();
 
 private:
     int N;
     int T;
-    std::vector<secret> secretSplit;
+    std::vector<secret> secrets;
     std::vector<double> polynomial;
 };
 
-secretSharing::secretSharing(int n,int t)
+secretSharing::secretSharing(int n, int t)
 {
     srand(time(NULL));
     if (t > n)
@@ -33,22 +35,69 @@ secretSharing::secretSharing(int n,int t)
         std::cerr << "T must smaller or equal to N" << std::endl;
         return;
     }
-    
+
     N = n;
     T = t;
 
     polynomial.push_back(0);
     for (int i = 1; i < t; i++)
     {
-        polynomial.push_back(rand());
+        polynomial.push_back(rand() % 10);
     }
 }
 
-void secretSharing::splitSecret(std::ostream &ostr,double secret)
+double secretSharing::calculate(double x)
 {
-    polynomial[0] = secret;
-    for (int i = 0; i < N;i++)
+    double y = 0;
+    for (int i = 0; i < polynomial.size(); i++)
     {
-        
+        y += polynomial[i] * pow(x, i);
+    }
+    return y;
+}
+
+void secretSharing::splitSecret(double inputSecret)
+{
+    polynomial[0] = inputSecret;
+    for (int i = 1; i < N; i++)
+    {
+        secret temp;
+        // int r = rand();
+        temp.secret = calculate(i);
+        temp.x = i;
+        secrets.push_back(temp);
+    }
+}
+
+double secretSharing::calculateSecret()
+{
+    double output = 0;
+    for (int i = 0; i < secrets.size();i++)
+    {
+        double y = secrets[i].secret;
+        double L = 1;
+        for (int j = 0; j < secrets.size(); j++)
+        {
+            
+            double x = secrets[i].x;
+            
+            if (i == j)
+                j++;
+            L *= (0 - secrets[j].x) / (x - secrets[j].x);
+        }
+        output += y * L;
+    }
+    return output;
+}
+
+void secretSharing::outputSecret()
+{
+    for (auto &a : polynomial)
+    {
+        std::cout << a << " " << std::endl;
+    }
+    for (auto &a : secrets)
+    {
+        std::cout << a.x << " " << a.secret << std::endl;
     }
 }
