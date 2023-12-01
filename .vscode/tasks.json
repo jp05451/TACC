@@ -10,7 +10,7 @@
       "args": [
         "-std=c++17",
         "-stdlib=libc++",
-        "-g3",
+        // "-g3",
         "-Wall",
         "${file}",
         "-o",

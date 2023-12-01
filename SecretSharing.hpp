@@ -15,14 +15,21 @@ class secretSharing
 {
 public:
     secretSharing(int, int);
+    void generatePoly();
     void splitSecret(double);
     double polyCalculate(double); // calculate the polynomial
 
     void outputSecret();
     double calculateSecret();
+    double calculateSecret(std::vector<secret> &);
     double floatRandom();
 
-private:
+    std::vector<secret> &getSecrets()
+    {
+        return secrets;
+    }
+
+// private:
     int N;
     int T;
     std::vector<secret> secrets;
@@ -43,11 +50,16 @@ secretSharing::secretSharing(int n, int t)
     N = n;
     T = t;
 
+    generatePoly();
+}
+
+void secretSharing::generatePoly()
+{
     // generate secret sharing polynomial
     polynomial.push_back(0);
     for (int i = 1; i < T; i++)
     {
-        polynomial.push_back(floatRandom());
+        polynomial.push_back((rand() % T)+1);
     }
 }
 
@@ -71,10 +83,45 @@ void secretSharing::splitSecret(double inputSecret)
     {
         secret temp;
 
+        // temp.secret = polyCalculate((double)i/N);
         temp.secret = polyCalculate(i);
         temp.x = i;
         secrets.push_back(temp);
     }
+}
+
+double secretSharing::calculateSecret(std::vector<secret> &inputSecrets)
+{
+    if (inputSecrets.size() < T)
+    {
+        std::cerr << "splits not enough to calculate secret" << std::endl;
+        exit(1);
+    }
+    // using Lagrange polynomial to calculate back secret
+    long double output = 0;
+
+    // calculate f(0)
+    for (int i = 0; i < inputSecrets.size(); i++)
+    {
+        double y = inputSecrets[i].secret;
+        long double L = 1;
+
+        // calculate L_i
+        for (int j = 0; j < inputSecrets.size(); j++)
+        {
+
+            double x = inputSecrets[i].x;
+
+            if (i == j)
+                continue;
+
+            L *= (0 - inputSecrets[j].x) / (x - inputSecrets[j].x);
+        }
+
+        // f(x) = sigma[ y_i * L_i(x) ]
+        output += y * L;
+    }
+    return output;
 }
 
 double secretSharing::calculateSecret()
