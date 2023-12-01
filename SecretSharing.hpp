@@ -16,10 +16,13 @@ class secretSharing
 public:
     secretSharing(int, int);
     void splitSecret(double);
-    double calculate(double);
+    double polyCalculate(double); // calculate the polynomial
+
     void outputSecret();
     double calculateSecret();
+    double floatRandom();
 
+private:
     int N;
     int T;
     std::vector<secret> secrets;
@@ -28,25 +31,29 @@ public:
 
 secretSharing::secretSharing(int n, int t)
 {
+    // check if N and T is available
     srand(time(NULL));
     if (t > n)
     {
         std::cerr << "T must smaller or equal to N" << std::endl;
-        return;
+        exit(1);
     }
 
+    // initialize N and T
     N = n;
     T = t;
 
+    // generate secret sharing polynomial
     polynomial.push_back(0);
     for (int i = 1; i < T; i++)
     {
-        polynomial.push_back(rand() % 10);
+        polynomial.push_back(floatRandom());
     }
 }
 
-double secretSharing::calculate(double x)
+double secretSharing::polyCalculate(double x)
 {
+    // calculate the polynomial
     double y = 0;
     for (int i = 0; i < polynomial.size(); i++)
     {
@@ -58,11 +65,13 @@ double secretSharing::calculate(double x)
 void secretSharing::splitSecret(double inputSecret)
 {
     polynomial[0] = inputSecret;
-    for (int i = 0; i < N; i++)
+
+    // calculate secret from x = 1 to N
+    for (int i = 1; i <= N; i++)
     {
         secret temp;
-        // int r = rand();
-        temp.secret = calculate(i);
+
+        temp.secret = polyCalculate(i);
         temp.x = i;
         secrets.push_back(temp);
     }
@@ -71,13 +80,16 @@ void secretSharing::splitSecret(double inputSecret)
 double secretSharing::calculateSecret()
 {
 
-
-
+    // using Lagrange polynomial to calculate back secret
     double output = 0;
+
+    // calculate f(0)
     for (int i = 0; i < secrets.size(); i++)
     {
         double y = secrets[i].secret;
         double L = 1;
+
+        // calculate L_i
         for (int j = 0; j < secrets.size(); j++)
         {
 
@@ -85,9 +97,11 @@ double secretSharing::calculateSecret()
 
             if (i == j)
                 continue;
-            double t = (0 - secrets[j].x) / (x - secrets[j].x);
-            L *= t;
+
+            L *= (0 - secrets[j].x) / (x - secrets[j].x);
         }
+
+        // f(x) = sigma[ y_i * L_i(x) ]
         output += y * L;
     }
     return output;
@@ -103,4 +117,9 @@ void secretSharing::outputSecret()
     {
         std::cout << a.x << " " << a.secret << std::endl;
     }
+}
+
+double secretSharing::floatRandom()
+{
+    return (double)rand() / (RAND_MAX);
 }

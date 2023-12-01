@@ -2,12 +2,10 @@
 
 int main()
 {
-    secretSharing s(5, 3);
+    secretSharing s(10, 10);
     s.splitSecret(10);
+    std::cout << std::endl;
     s.outputSecret();
-
-
-    
 
     std::cout << s.calculateSecret() << std::endl;
 }
