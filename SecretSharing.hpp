@@ -84,6 +84,7 @@ void secretSharing::splitSecret(double inputSecret)
         secret temp;
 
         // temp.secret = polyCalculate((double)i/N);
+        // temp.x = (double)i/N;
         temp.secret = polyCalculate(i);
         temp.x = i;
         secrets.push_back(temp);
