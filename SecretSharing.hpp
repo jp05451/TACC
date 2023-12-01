@@ -20,7 +20,6 @@ public:
     void outputSecret();
     double calculateSecret();
 
-private:
     int N;
     int T;
     std::vector<secret> secrets;
@@ -40,7 +39,7 @@ secretSharing::secretSharing(int n, int t)
     T = t;
 
     polynomial.push_back(0);
-    for (int i = 1; i < t; i++)
+    for (int i = 1; i < T; i++)
     {
         polynomial.push_back(rand() % 10);
     }
@@ -59,7 +58,7 @@ double secretSharing::calculate(double x)
 void secretSharing::splitSecret(double inputSecret)
 {
     polynomial[0] = inputSecret;
-    for (int i = 1; i < N; i++)
+    for (int i = 0; i < N; i++)
     {
         secret temp;
         // int r = rand();
@@ -71,19 +70,23 @@ void secretSharing::splitSecret(double inputSecret)
 
 double secretSharing::calculateSecret()
 {
+
+
+
     double output = 0;
-    for (int i = 0; i < secrets.size();i++)
+    for (int i = 0; i < secrets.size(); i++)
     {
         double y = secrets[i].secret;
         double L = 1;
         for (int j = 0; j < secrets.size(); j++)
         {
-            
+
             double x = secrets[i].x;
-            
+
             if (i == j)
-                j++;
-            L *= (0 - secrets[j].x) / (x - secrets[j].x);
+                continue;
+            double t = (0 - secrets[j].x) / (x - secrets[j].x);
+            L *= t;
         }
         output += y * L;
     }
