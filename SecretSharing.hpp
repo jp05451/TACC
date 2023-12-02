@@ -4,39 +4,44 @@
 #include <time.h>
 #include <cmath>
 
+#define MODULUS_DEFAULT (2 ^ 32 - 1)
+
 class secret
 {
 public:
-    double x;
-    double secret;
+    int index;
+    int value;
 };
 
 class secretSharing
 {
 public:
-    secretSharing(int, int);
+    secretSharing(int, int, unsigned int);
     void generatePoly();
-    void splitSecret(double);
-    double polyCalculate(double); // calculate the polynomial
+    void share(int);
+    unsigned int polyCalculate(int); // calculate the polynomial
 
     void outputSecret();
-    double calculateSecret();
-    double calculateSecret(std::vector<secret> &);
-    double floatRandom();
+    int calculateSecret();
+    long calculateSecret(std::vector<secret> &);
+    int floatRandom();
 
     std::vector<secret> &getSecrets()
     {
         return secrets;
     }
 
-// private:
+    // private:
     int N;
     int T;
+
+    unsigned int modulus;
+
     std::vector<secret> secrets;
-    std::vector<double> polynomial;
+    std::vector<int> polynomial;
 };
 
-secretSharing::secretSharing(int n, int t)
+secretSharing::secretSharing(int n, int t, unsigned int modulus = MODULUS_DEFAULT)
 {
     // check if N and T is available
     srand(time(NULL));
@@ -50,7 +55,7 @@ secretSharing::secretSharing(int n, int t)
     N = n;
     T = t;
 
-    generatePoly();
+    this->modulus = modulus;
 }
 
 void secretSharing::generatePoly()
@@ -59,23 +64,26 @@ void secretSharing::generatePoly()
     polynomial.push_back(0);
     for (int i = 1; i < T; i++)
     {
-        polynomial.push_back((rand() % T)+1);
+        polynomial.push_back((rand() % modulus) + 1);
     }
 }
 
-double secretSharing::polyCalculate(double x)
+unsigned int secretSharing::polyCalculate(int x)
 {
     // calculate the polynomial
-    double y = 0;
+    unsigned int y = 0;
     for (int i = 0; i < polynomial.size(); i++)
     {
-        y += polynomial[i] * pow(x, i);
+        y += (polynomial[i] * (int)pow(x, i)) % modulus;
+        y %= modulus;
     }
     return y;
 }
 
-void secretSharing::splitSecret(double inputSecret)
+void secretSharing::share(int inputSecret)
 {
+
+    generatePoly();
     polynomial[0] = inputSecret;
 
     // calculate secret from x = 1 to N
@@ -83,15 +91,13 @@ void secretSharing::splitSecret(double inputSecret)
     {
         secret temp;
 
-        // temp.secret = polyCalculate((double)i/N);
-        // temp.x = (double)i/N;
-        temp.secret = polyCalculate(i);
-        temp.x = i;
+        temp.value = polyCalculate(i);
+        temp.index = i;
         secrets.push_back(temp);
     }
 }
 
-double secretSharing::calculateSecret(std::vector<secret> &inputSecrets)
+long secretSharing::calculateSecret(std::vector<secret> &inputSecrets)
 {
     if (inputSecrets.size() < T)
     {
@@ -99,24 +105,25 @@ double secretSharing::calculateSecret(std::vector<secret> &inputSecrets)
         exit(1);
     }
     // using Lagrange polynomial to calculate back secret
-    long double output = 0;
+    long int output = 0;
 
     // calculate f(0)
     for (int i = 0; i < inputSecrets.size(); i++)
     {
-        double y = inputSecrets[i].secret;
-        long double L = 1;
+        int y = inputSecrets[i].value;
+        long int L = 1;
 
         // calculate L_i
         for (int j = 0; j < inputSecrets.size(); j++)
         {
 
-            double x = inputSecrets[i].x;
+            int x = inputSecrets[i].index;
 
             if (i == j)
                 continue;
 
-            L *= (0 - inputSecrets[j].x) / (x - inputSecrets[j].x);
+            L *= (0 - inputSecrets[j].index) / (x - inputSecrets[j].index);
+            L %= modulus;
         }
 
         // f(x) = sigma[ y_i * L_i(x) ]
@@ -125,28 +132,28 @@ double secretSharing::calculateSecret(std::vector<secret> &inputSecrets)
     return output;
 }
 
-double secretSharing::calculateSecret()
+int secretSharing::calculateSecret()
 {
 
     // using Lagrange polynomial to calculate back secret
-    double output = 0;
+    int output = 0;
 
     // calculate f(0)
     for (int i = 0; i < secrets.size(); i++)
     {
-        double y = secrets[i].secret;
-        double L = 1;
+        int y = secrets[i].value;
+        int L = 1;
 
         // calculate L_i
         for (int j = 0; j < secrets.size(); j++)
         {
 
-            double x = secrets[i].x;
+            int x = secrets[i].index;
 
             if (i == j)
                 continue;
 
-            L *= (0 - secrets[j].x) / (x - secrets[j].x);
+            L *= (0 - secrets[j].index) / (x - secrets[j].index);
         }
 
         // f(x) = sigma[ y_i * L_i(x) ]
@@ -163,11 +170,11 @@ void secretSharing::outputSecret()
     }
     for (auto &a : secrets)
     {
-        std::cout << a.x << " " << a.secret << std::endl;
+        std::cout << a.index << " " << a.value << std::endl;
     }
 }
 
-double secretSharing::floatRandom()
+int secretSharing::floatRandom()
 {
-    return (double)rand() / (RAND_MAX);
+    return (int)rand() / (RAND_MAX);
 }
