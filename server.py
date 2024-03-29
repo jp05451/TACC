@@ -10,7 +10,7 @@ class server:
 
     def socketConnect(self, addr, port):
         self.serverSocket.bind((addr, port))
-        self.listen(5)
+        self.serverSocket.listen(5)
 
     def __del__(self):
         self.serverSocket.close()
