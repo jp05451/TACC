@@ -3,6 +3,7 @@ from base64 import b64decode
 from base64 import b64encode
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
+from time import sleep
 
 
 class client:
@@ -44,15 +45,15 @@ class client:
 
 if __name__ == "__main__":
     Client = client()
-    from server import server
-    Server = server()
-    cypher = Server.RSA_Encrypt(msg="1234", key=RSA.importKey(Client.getPublicKey()))
-    print("Cypher:")
-
-    # print(Client.RSA_Decrypt(cypherText=cypher, key=RSA.importKey(Client.getPrivateKey())))
-
-    text = Client.RSA_Decrypt(cypher, RSA.importKey(Client.getPrivateKey()))
     
-    print(text)
-    # Client.connectSocket("127.0.0.1", 8888)
-    # Client.sendPublicKey()
+    Client.connectSocket("127.0.0.1",8888)
+    Client.sendPublicKey()
+    
+    # Client.connectSocket("127.0.0.1",8888)
+    
+    sleep(1000)
+    
+    print("sending 1234")
+    Client.clientSocket.send("1234".encode("utf-8"))
+    # cypher=Client.clientSocket.recv(4096).decode()
+    # text=Client.RSA_Decrypt(cypher,RSA.importKey(Client.getPrivateKey()))
