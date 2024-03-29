@@ -23,3 +23,6 @@ class client():
         cipher = PKCS1_OAEP.new(self.key)
         cipherText = cipher.encrypt(plainText)
         return cipherText
+    
+    def sendPublicKey(self):
+        self.clientSocket.send(self.getPublicKey())
