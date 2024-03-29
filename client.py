@@ -14,9 +14,12 @@ class client():
         self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP宣告
         self.clientSocket.connect(addr,port)
 
-    def RSA_ecrypt(self,cypherText):
+    def RSA_ecrypt(self,cipherText):
         cipher = PKCS1_OAEP.new(self.key)
-        plainText = cipher.decrypt(cypherText)
+        plainText = cipher.decrypt(cipherText)
         return plainText
     
-    # def RSA_encrypt(self,plainText):
+    def RSA_encrypt(self,plainText):
+        cipher = PKCS1_OAEP.new(self.key)
+        cipherText = cipher.encrypt(plainText)
+        return cipherText
