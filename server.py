@@ -17,8 +17,15 @@ class server:
         
     def recvPublicKey(self):
         client,addr=self.serverSocket.accept()
-        self.clientPublicKey=client.recv(1024)
+        self.clientPublicKey=client.recv(1024).decode()
+        client.close()
         
+    # def 
         
+if __name__ == "__main__":
+    Server=server()
+    Server.socketConnect("0.0.0.0",8888)
+    Server.recvPublicKey()
+    print(Server.clientPublicKey)
         
         

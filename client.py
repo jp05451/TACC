@@ -3,7 +3,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
 
-class client:
+class Client:
     def __init__(self):
         self.key = RSA.generate(2048)
         self.clientSocket = socket()
@@ -33,4 +33,6 @@ class client:
 
 
 if __name__ == "__main__":
-    client = client()
+    Client = Client()
+    Client.connectSocket("127.0.0.1",8888)
+    Client.sendPublicKey()
