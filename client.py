@@ -15,39 +15,24 @@ class client:
         self.clientSocket.close()
 
     def getPublicKey(self):
-        return self.key.publickey().exportKey("DER")
+        return self.key.publickey().exportKey()
 
     def getPrivateKey(self):
-        return self.key.exportKey("DER")
+        return self.key.exportKey()
 
     def connectSocket(self, addr, port):
         self.clientSocket.connect((addr, port))
 
-    # def RSA_Decrypt(self, cypherText, key=0):
-    #     if key == 0:
-    #         key = self.getPrivateKey
-    #     cipher = PKCS1_OAEP.new(key)
-    #     plainText = cipher.decrypt(base64.b64decode(cypherText))
-    #     return plainText
-
-    # def RSA_Encrypt(self, msg, key=0):
-    #     if key == 0:
-    #         key = self.getPrivateKey
-    #     cipher = PKCS1_OAEP.new(key)
-    #     cypherText = cipher.encrypt(msg.encode("utf-8"))
-    #     return base64.b64encode(cypherText).decode()
-
-    def RSA_Decrypt(self, cypherText,key=0):
-        if key == 0:
-            key = self.getPrivateKey()
-        cipher = PKCS1_OAEP.new(self.key)
+    def RSA_Decrypt(self, cypherText, key):
+        # key = RSA.importKey(self.getPublicKey())
+        cipher = PKCS1_OAEP.new(key)
         plainText = cipher.decrypt(base64.b64decode(cypherText))
         return plainText
 
-    def RSA_Encrypt(self, msg,key=0):
-        if key == 0:
-            key=self.getPrivateKey()
-        cipher = PKCS1_OAEP.new(self.key)
+    def RSA_Encrypt(self, msg,key):
+        
+        # key = RSA.importKey(self.getPrivateKey())
+        cipher = PKCS1_OAEP.new(key)
         cypherText = cipher.encrypt(msg.encode("utf-8"))
         # return cypherText
         return base64.b64encode(cypherText).decode()
@@ -58,11 +43,11 @@ class client:
 
 if __name__ == "__main__":
     Client = client()
-    cypher = Client.RSA_Encrypt(msg="1234",key=Client.getPrivateKey())
+    cypher = Client.RSA_Encrypt(msg="1234", key=Client.getPrivateKey())
     print("Cypher:")
-    print(cypher)
+    # print(Client.getPrivateKey())
 
-    print(Client.RSA_Decrypt(cypherText=cypher,key=Client.getPublicKey()))
+    print(Client.RSA_Decrypt(cypherText=cypher, key=Client.getPublicKey()))
     # from server import server
 
     # Server = server()
