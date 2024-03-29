@@ -1,5 +1,6 @@
 from socket import socket
 from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
 
 class client():
     def __init__(self):
@@ -12,3 +13,10 @@ class client():
     def connectSocket(self,addr,port):
         self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP宣告
         self.clientSocket.connect(addr,port)
+
+    def RSA_ecrypt(self,cypherText):
+        cipher = PKCS1_OAEP.new(self.key)
+        plainText = cipher.decrypt(cypherText)
+        return plainText
+    
+    # def RSA_encrypt(self,plainText):
