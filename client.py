@@ -1,5 +1,6 @@
 import socket
-import base64
+from base64 import b64decode
+from base64 import b64encode
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
@@ -26,7 +27,7 @@ class client:
     def RSA_Decrypt(self, cypherText, key):
         # key = RSA.importKey(self.getPublicKey())
         cipher = PKCS1_OAEP.new(key)
-        plainText = cipher.decrypt(base64.b64decode(cypherText))
+        plainText = cipher.decrypt(b64decode(cypherText))
         return plainText
 
     def RSA_Encrypt(self, msg,key):
@@ -35,7 +36,7 @@ class client:
         cipher = PKCS1_OAEP.new(key)
         cypherText = cipher.encrypt(msg.encode("utf-8"))
         # return cypherText
-        return base64.b64encode(cypherText).decode()
+        return b64encode(cypherText).decode()
 
     def sendPublicKey(self):
         self.clientSocket.send(self.getPublicKey())
@@ -43,16 +44,15 @@ class client:
 
 if __name__ == "__main__":
     Client = client()
-    cypher = Client.RSA_Encrypt(msg="1234", key=Client.getPrivateKey())
+    from server import server
+    Server = server()
+    cypher = Server.RSA_Encrypt(msg="1234", key=RSA.importKey(Client.getPublicKey()))
     print("Cypher:")
-    # print(Client.getPrivateKey())
 
-    print(Client.RSA_Decrypt(cypherText=cypher, key=Client.getPublicKey()))
-    # from server import server
+    # print(Client.RSA_Decrypt(cypherText=cypher, key=RSA.importKey(Client.getPrivateKey())))
 
-    # Server = server()
-    # print(base64.b64decode(cypher))
-    # text = Server.RSA_Decrypt(cypher, Client.getPublicKey())
-    # print(text)
+    text = Client.RSA_Decrypt(cypher, RSA.importKey(Client.getPrivateKey()))
+    
+    print(text)
     # Client.connectSocket("127.0.0.1", 8888)
     # Client.sendPublicKey()
