@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "733e55abf51499dac97a1593d67b71293f3ce05fbe7b5e5cd820fa0d363ba98a"
+            "sha256": "53b803afdb76a46060c5dd1ae165f39b97b2ce689f08d214be9cd86f58e7488b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,12 +16,29 @@
         ]
     },
     "default": {
+        "lagrange": {
+            "hashes": [
+                "sha256:473c63859cd0433565f6ad7f0fa614daa6fb784e518131abce862ecf775b739c",
+                "sha256:dbc53d97ded975d1946ec1118717cbb0f5f1248f0e6a4e35df2a9b39d5fadb53"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==2.1.0"
+        },
         "pycrypto": {
             "hashes": [
                 "sha256:f2ce1e989b272cfcb677616763e0a2e7ec659effa67a88aa92b3a65528f60a3c"
             ],
             "index": "pypi",
             "version": "==2.6.1"
+        },
+        "shamirs": {
+            "hashes": [
+                "sha256:1b56f2dbd4a494f86fc9b827a5790844377f9a290a3664c59ece189c4affee21",
+                "sha256:b97436d150143456fe42f79cda6e1d354b8d4f3e3f59d5f085c00ee68150569e"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==2.1.0"
         }
     },
     "develop": {}
