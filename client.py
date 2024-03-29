@@ -1,4 +1,4 @@
-from socket import socket
+import socket
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import PKCS1_OAEP
 
@@ -6,7 +6,7 @@ from Crypto.Cipher import PKCS1_OAEP
 class Client:
     def __init__(self):
         self.key = RSA.generate(2048)
-        self.clientSocket = socket()
+        self.clientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM)  # TCP宣告
 
     def __del__(self):
         self.clientSocket.close()
@@ -15,8 +15,7 @@ class Client:
         return self.key.publickey().exportKey("PEM")
 
     def connectSocket(self, addr, port):
-        self.clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # TCP宣告
-        self.clientSocket.connect(addr, port)
+        self.clientSocket.connect((addr, port))
 
     def RSA_PrivateKeyEcrypt(self, cypherText):
         cipher = PKCS1_OAEP.new(self.key)
