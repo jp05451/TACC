@@ -8,7 +8,7 @@ from time import sleep
 
 class client:
     def __init__(self):
-        self.key = RSA.generate(2048)
+        self.__key = RSA.generate(2048)
         self.clientSocket = socket.socket(
             family=socket.AF_INET, type=socket.SOCK_STREAM
         )  # TCP宣告
@@ -17,16 +17,16 @@ class client:
         self.clientSocket.close()
 
     def getPublicKey(self):
-        return self.key.publickey().exportKey()
+        return self.__key.publickey().exportKey()
 
     def getPrivateKey(self):
-        return self.key.exportKey()
+        return self.__key.exportKey()
 
     def connectSocket(self, addr, port):
         self.clientSocket.connect((addr, port))
 
-    def RSA_Decrypt(self, cypherText):
-        key = RSA.importKey(self.getPrivateKey())
+    def RSA_Decrypt(self, cypherText,inputKey):
+        key = RSA.importKey(inputKey)
         cipher = PKCS1_OAEP.new(key)
         plainText = cipher.decrypt(b64decode(cypherText))
         return plainText
@@ -48,5 +48,5 @@ if __name__ == "__main__":
     Client.connectSocket("127.0.0.1", 8888)
     Client.sendPublicKey()
     encryptKeyShare = Client.clientSocket.recv(1024).decode()
-    keyshare=Client.RSA_Decrypt(encryptKeyShare)
+    keyshare=Client.RSA_Decrypt(encryptKeyShare,Client.getPrivateKey())
     print(keyshare)

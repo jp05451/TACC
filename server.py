@@ -28,7 +28,7 @@ class server:
         return plainText.decode("utf-8")
 
     def RSA_Encrypt(self, msg,key):
-        # key=RSA.importKey(self.getPublicKey())
+        key=RSA.importKey(key)
         cipher = PKCS1_OAEP.new(key)
         cypherText = cipher.encrypt(msg.encode("utf-8"))
         return b64encode(cypherText).decode()
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     print(keyshare)
     
     print("encrypting keyshare")
-    encryptKeyShare=Server.RSA_Encrypt(str(keyshare),RSA.importKey(publickey))
+    encryptKeyShare=Server.RSA_Encrypt(str(keyshare),publickey)
 
     print("sending encrypted key share")
     connection.send(encryptKeyShare.encode())
