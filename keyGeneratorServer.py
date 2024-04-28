@@ -12,6 +12,7 @@ class client:
         self.clientSocket = socket.socket(
             family=socket.AF_INET, type=socket.SOCK_STREAM
         )  # TCP宣告
+        
 
     def __del__(self):
         self.clientSocket.close()
@@ -40,6 +41,7 @@ class client:
 
     def sendPublicKey(self):
         self.clientSocket.send(self.getPublicKey())
+        
 
 
 if __name__ == "__main__":

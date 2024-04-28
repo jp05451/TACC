@@ -1,9 +1,12 @@
 from socket import socket
 from base64 import b64decode,b64encode
-# import random
+import random
+
+random.seed()
 
 from Crypto.Cipher import PKCS1_OAEP
 from Crypto.PublicKey import RSA
+from Crypto.Util import number
 import shamirs
 
 
@@ -11,6 +14,7 @@ class server:
     def __init__(self):
         self.serverSocket = socket()
         self.share = 1111
+        
 
     def socketConnect(self, addr, port):
         self.serverSocket.bind((addr, port))
@@ -41,11 +45,15 @@ class server:
     def keySharing(self,secret:int,N,T):
         self.__secretShares = shamirs.shares(secret, quantity=N,threshold=T)
         
-    # def keySharing(self, secret: int, N):
-    #     self.__secretShares = shamirs.shares(secret, quantity=N)
 
     def getShare(self,part:int):
         return self.__secretShares[part]
+    
+    def generateMasterKey(self):
+        number_length = 2048
+        self.p = number.getPrime(number_length)
+        self.g = number.getPrime(number_length)
+    
         
 
 if __name__ == "__main__":
