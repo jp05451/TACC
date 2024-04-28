@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 shamirs = "*"
 pycryptodome = "*"
-shamir = "*"
 
 [dev-packages]
 
