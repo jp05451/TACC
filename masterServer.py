@@ -65,12 +65,20 @@ class server:
         
         # split alpha
         alphaShares=shamirs.shares(alpha , modulus=self.p, quantity=5,threshold=5)
-        self.MSK_shares=[(self.g1**i.value)%self.p for i in alphaShares]
         
-        print(f"{self.g1} * {alpha}")
+        # print(alphaShares)
+        
+        # generate MSK(g1 ** alpha_i)
+        for i in range(len(alphaShares)):
+            alphaShares[i].value = self.g1 ** alphaShares[i].value % self.p
+                
+        print(f"g1: {self.g1} * alpha: {alpha}")
         
         print(f"p: {self.p}")
-        print(self.MSK_shares)
+        # print(self.MSK_shares)
+        print(alphaShares)
+        
+        print(f"shifted: {shamirs.interpolate(alphaShares)}")
         
         
         
