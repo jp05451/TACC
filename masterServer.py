@@ -48,46 +48,22 @@ class server:
     def getShare(self,part:int):
         return self.__secretShares[part]
     
-    def generateMasterKey(self):
+    def generateMasterKey(self,N,T):\
+        # N = split of the master key
+        # T = least shares to combine master key
+        
         number_length = 4
         self.p = number.getPrime(number_length)
         
-        # generate base number
-        self.g1 = number.getPrime(number_length-1)
-        self.g2 = number.getPrime(number_length-1)
+        # generate master key
+        masterKey=random.randint(0,self.p-1)
         
-        # generate index alpha
-        alpha=random.randint(0,self.p-1)
-        
-        # generate PK and MSK
-        self.PK=(self.g1,self.g1**alpha)
-        # MSK=self.g2**alpha
-        
-        # split alpha
-        alphaShares=shamirs.shares(alpha , modulus=self.p, quantity=5,threshold=5)
-        
-        # print(alphaShares)
-        
-        # generate MSK(g1 ** alpha_i)
-        for i in range(len(alphaShares)):
-            alphaShares[i].value = self.g1 ** alphaShares[i].value % self.p
-                
-        print(f"g1: {self.g1} * alpha: {alpha}")
-        
-        print(f"p: {self.p}")
-        # print(self.MSK_shares)
-        print(alphaShares)
-        
-        print(f"shifted: {shamirs.interpolate(alphaShares)}")
+        # split the master key to N splits
+        self.__masterkeyShare=shamirs.shares(masterKey,quantity=N,threshold=T,modulus=self.p)
         
         
         
         
-        
-        
-    
-        
-
 if __name__ == "__main__":
     Server = server()
     # Server.generateMasterKey()
